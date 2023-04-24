@@ -18,7 +18,7 @@ export type SubscriptionPattern = {
 };
 
 // Use to decorate a method to subscribe to a topic.
-export const GCPubSubSubscriber = (pattern: SubscriptionPattern) => MessagePattern(pattern);
+export const GCSubscriptionHandler = (pattern: SubscriptionPattern) => MessagePattern(pattern);
 
 /**
  * Custom transport strategy to handle google pub/sub messages.

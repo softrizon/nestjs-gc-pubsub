@@ -2,8 +2,6 @@
 
 # Google Cloud Pub/Sub Wrapper for NestJS
 
-[![npm version][version-img]][version-url]
-[![MIT License][license-img]][license-url]
 
 ## Description
 
@@ -26,34 +24,97 @@ npm install @softrizon/nestjs-gc-pubsub
 - Module configuration
 
 ```ts
+import { Module } from '@nestjs/common';
+import { GCPubSubModule } from '@softrizon/gc-pubsub';
+import { MessageService } from './message.service';
+
+@Module({
+  imports: [
+    GCPubSubModule.forRoot({
+      config: { },
+    }),
+  ],
+  providers: [MessageService],
+})
+export class AppModule {}
 
 ```
+
+> NOTE: The `config` is the same interface as in the [PubSub][googleapis-url] package.
+
+
 
 - Inject the service (e.g., `MessageService`) to emit messages.
 
 ```ts
+import { Injectable } from '@nestjs/common';
+import { GCPubSubService } from '@softrizon/gc-pubsub';
 
+@Injectable()
+export class MessageService {
+  constructor(private pubsub: GCPubSubService) {}
+
+  emit<T = any>(pattern: string, data: T): void {
+    const emitOptions = {
+      message: pattern;
+      data: data;
+      topic: 'topic-name';
+      attributes: {
+        format: 'json',
+      }
+    }
+    this.pubsub.emit(emitOptions);
+  }
+}
 ```
+
+
 
 ### Subscribe on messages
 
 - Server configuration
 
 ```ts
+import { NestFactory } from '@nestjs/core';
+import { MicroserviceOptions } from '@nestjs/microservices';
+import { GCPubSubServer } from '@softrizon/gc-pubsub';
+import { AppModule } from './app.module';
 
+async function bootstrap() {
+  const app = await NestFactory.create(AppModule);
+
+  app.connectMicroservice<MicroserviceOptions>({
+    strategy: new GCPubSubServer({
+      config: {  },
+    }),
+  });
+
+  app.startAllMicroservices();
+  await app.listen(3000);
+}
+bootstrap();
 ```
 
-- Subscribe to message pattern
+>
+> NOTE: The `config` is the same interface as in the [PubSub][googleapis-url] package.
+>
+
+- Register a subscription handler
 
 ```ts
+import { Controller } from '@nestjs/common';
+import { MessagePattern, Payload } from '@nestjs/microservices';
+import { GCSubscriptionHandler, Message } from '@softrizon/gc-pubsub';
 
+@Controller()
+export class MessagesEventSubscriber {
+  @GCSubscriptionHandler({ subscription: 'test-subscription', topic: 'test-topic' })
+  async doSomething(@Payload() data: Message): Promise<any> | Observable<any> | any {
+    // do something with data...
+  }
+}
 ```
 
-> Note: Do not forget to register the controller in the corresponding module.
-> In the example above, the message pattern is an object with the keys `event`
-> and `format`. This is a practice useful for filtering events in the one-to-many
-> pubsub architecture. If you don't need this kind of filtering, you may need to
-> extend `PubSubServer` and override the `handleMessage` and `getData` methods.
 
 ### Read more
 
@@ -69,7 +130,3 @@ Developed by [Softrizon](https://github.com/softrizon).
 This project is [MIT-licensed](LICENSE).
 
 [googleapis-url]: https://github.com/googleapis/nodejs-pubsub
-[version-img]: https://img.shields.io/npm/v/@softrizon/nestjs-gc-pubsub
-[version-url]: https://www.npmjs.com/package/@softrizon/nestjs-gc-pubsub
-[license-img]: https://img.shields.io/npm/l/@softrizon/nestjs-gc-pubsub
-[license-url]: https://opensource.org/licenses/MIT

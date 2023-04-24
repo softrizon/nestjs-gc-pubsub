@@ -54,7 +54,7 @@ export class GCPubSubClient extends ClientProxy {
    */
   protected serialize(packet: ReadPacket): EmitOptions {
     const { topic, message, attributes } = packet.pattern as Omit<EmitOptions, 'data'>;
-    return { data: packet.data, message: message.toUpperCase().replace(/-/gi, '_'), topic, attributes };
+    return { data: packet.data, message, topic, attributes };
   }
 
   protected getTopic(topicName: string): Topic {
