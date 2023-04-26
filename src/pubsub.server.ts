@@ -3,12 +3,12 @@ import { ClientConfig, Message, PubSub, Subscription } from '@google-cloud/pubsu
 import { CustomTransportStrategy, MessageHandler, MessagePattern, Server } from '@nestjs/microservices';
 import { ERROR_EVENT, MESSAGE_EVENT } from '@nestjs/microservices/constants';
 import { first, from, isObservable, mergeMap, of } from 'rxjs';
-import { GCPubSubContext } from './gc-pubsub.context';
+import { PubSubContext } from './pubsub.context';
 
 /**
  * Supported server options.
  */
-export interface GCPubSubServerOptions {
+export interface PubSubServerOptions {
   config: ClientConfig;
 }
 
@@ -18,18 +18,18 @@ export type SubscriptionPattern = {
 };
 
 // Use to decorate a method to subscribe to a topic.
-export const GCSubscriptionHandler = (pattern: SubscriptionPattern) => MessagePattern(pattern);
+export const SubscriptionHandler = (pattern: SubscriptionPattern) => MessagePattern(pattern);
 
 /**
  * Custom transport strategy to handle google pub/sub messages.
  */
-export class GCPubSubServer extends Server implements CustomTransportStrategy {
-  protected readonly logger = new Logger(GCPubSubServer.name);
+export class PubSubServer extends Server implements CustomTransportStrategy {
+  protected readonly logger = new Logger(PubSubServer.name);
   protected client: PubSub;
   protected readonly clientConfig: ClientConfig;
   protected subscriptions: Subscription[] = [];
 
-  constructor(protected readonly options: GCPubSubServerOptions) {
+  constructor(protected readonly options: PubSubServerOptions) {
     super();
     this.clientConfig = this.options.config;
     this.client = new PubSub(this.clientConfig);
@@ -55,7 +55,7 @@ export class GCPubSubServer extends Server implements CustomTransportStrategy {
     await this.client?.close();
   }
 
-  private registerSubscription(pattern: string, handler: MessageHandler<Message, GCPubSubContext>): Subscription {
+  private registerSubscription(pattern: string, handler: MessageHandler<Message, PubSubContext>): Subscription {
     const { subscription, topic: topicName } = JSON.parse(pattern) as SubscriptionPattern;
 
     const topic = topicName ? this.client.topic(topicName) : undefined;
@@ -63,7 +63,7 @@ export class GCPubSubServer extends Server implements CustomTransportStrategy {
     return this.client
       .subscription(subscription, { topic })
       .on(MESSAGE_EVENT, (message: Message) =>
-        from(handler(message, new GCPubSubContext([message, pattern])))
+        from(handler(message, new PubSubContext([message, pattern])))
           .pipe(
             mergeMap((handler) => (isObservable(handler) ? handler : of(handler))),
             first(),

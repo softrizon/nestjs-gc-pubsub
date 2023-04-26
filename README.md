@@ -16,7 +16,7 @@ subscribe to a topic.
 This service is built with Node (`v18.12.1` using `npm@8.13.2`) and NestJS.
 
 ```bash
-npm install @softrizon/nestjs-gc-pubsub
+npm install @softrizon/nestjs-gcp-pubsub
 ```
 
 ## Usage
@@ -27,12 +27,12 @@ npm install @softrizon/nestjs-gc-pubsub
 
 ```ts
 import { Module } from '@nestjs/common';
-import { GCPubSubModule } from '@softrizon/gc-pubsub';
+import { PubSubModule } from '@softrizon/gcp-pubsub';
 import { MessageService } from './message.service';
 
 @Module({
   imports: [
-    GCPubSubModule.forRoot({
+    PubSubModule.forRoot({
       config: { },
     }),
   ],
@@ -42,7 +42,7 @@ export class AppModule {}
 
 ```
 
-> NOTE: The `config` is the same interface as in the [PubSub][googleapis-url] package.
+> NOTE: The `config` is the same interface as in the [@google-cloud/pubsub][googleapis-url] package.
 
 
 
@@ -50,11 +50,11 @@ export class AppModule {}
 
 ```ts
 import { Injectable } from '@nestjs/common';
-import { GCPubSubService } from '@softrizon/gc-pubsub';
+import { PubSubService } from '@softrizon/gcp-pubsub';
 
 @Injectable()
 export class MessageService {
-  constructor(private pubsub: GCPubSubService) {}
+  constructor(private pubsub: PubSubService) {}
 
   emit<T = any>(pattern: string, data: T): void {
     const emitOptions = {
@@ -79,14 +79,14 @@ export class MessageService {
 ```ts
 import { NestFactory } from '@nestjs/core';
 import { MicroserviceOptions } from '@nestjs/microservices';
-import { GCPubSubServer } from '@softrizon/gc-pubsub';
+import { PubSubServer } from '@softrizon/gcp-pubsub';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   app.connectMicroservice<MicroserviceOptions>({
-    strategy: new GCPubSubServer({
+    strategy: new PubSubServer({
       config: {  },
     }),
   });
@@ -98,7 +98,7 @@ bootstrap();
 ```
 
 >
-> NOTE: The `config` is the same interface as in the [PubSub][googleapis-url] package.
+> NOTE: The `config` is the same interface as in the [@google-cloud/pubsub][googleapis-url] package.
 >
 
 - Register a subscription handler
@@ -106,13 +106,13 @@ bootstrap();
 ```ts
 import { Controller } from '@nestjs/common';
 import { MessagePattern, Payload } from '@nestjs/microservices';
-import { GCSubscriptionHandler, Message } from '@softrizon/gc-pubsub';
+import { SubscriptionHandler, Message } from '@softrizon/gcp-pubsub';
 
 @Controller()
 export class MessagesEventSubscriber {
-  @GCSubscriptionHandler({ subscription: 'test-subscription', topic: 'test-topic' })
-  async doSomething(@Payload() data: Message): Promise<any> | Observable<any> | any {
-    // do something with data...
+  @SubscriptionHandler({ subscription: 'test-subscription', topic: 'test-topic' })
+  async doSomething(@Payload() message: Message): Promise<any> | Observable<any> | any {
+    // do something with the message...
   }
 }
 ```
@@ -120,7 +120,7 @@ export class MessagesEventSubscriber {
 
 ### Read more
 
-Visit the [main page][googleapis-url] to learn more about its key features,
+Visit the [@google-cloud/pubsub][googleapis-url] repository to learn more about its key features,
 configurations, limitations, and API.
 
 ## Author
@@ -133,7 +133,7 @@ This project is [MIT-licensed](LICENSE).
 
 [googleapis-url]: https://github.com/googleapis/nodejs-pubsub
 
-[version-img]: https://img.shields.io/npm/v/@softrizon/gc-pubsub
-[version-url]: https://www.npmjs.com/package/@softrizon/gc-pubsub
-[license-img]: https://img.shields.io/npm/l/@softrizon/gc-pubsub
+[version-img]: https://img.shields.io/npm/v/@softrizon/gcp-pubsub
+[version-url]: https://www.npmjs.com/package/@softrizon/gcp-pubsub
+[license-img]: https://img.shields.io/npm/l/@softrizon/gcp-pubsub
 [license-url]: https://opensource.org/licenses/MIT

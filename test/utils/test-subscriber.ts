@@ -1,9 +1,9 @@
 import { Controller } from '@nestjs/common';
-import { GCSubscriptionHandler, Message } from '../../src';
+import { SubscriptionHandler, Message } from '../../src';
 
 @Controller()
 export class TestSubscriber {
-  @GCSubscriptionHandler({ subscription: 'test-subscription', topic: 'test-topic' })
+  @SubscriptionHandler({ subscription: 'test-subscription', topic: 'test-topic' })
   handle(message: Message, ...rest: any[]) {
     return this.testableHandle(message, ...rest);
   }

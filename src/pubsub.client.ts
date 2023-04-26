@@ -11,11 +11,11 @@ export type EmitOptions = {
 
 export const ConfigProvider = 'PUBSUB_CLIENT_CONFIG';
 
-export class GCPubSubClient extends ClientProxy {
+export class PubSubClient extends ClientProxy {
   protected topics: Map<string, Topic> = new Map();
-  protected pubSubClient: PubSub;
+  protected pubsubClient: PubSub;
 
-  private readonly logger: Logger = new Logger(GCPubSubClient.name);
+  private readonly logger: Logger = new Logger(PubSubClient.name);
 
   constructor(
     @Inject(ConfigProvider)
@@ -25,13 +25,13 @@ export class GCPubSubClient extends ClientProxy {
   }
 
   async connect(): Promise<PubSub> {
-    return (this.pubSubClient ??= new PubSub(this.clientConfig));
+    return (this.pubsubClient ??= new PubSub(this.clientConfig));
   }
 
   async close() {
     const closingTopics = Array.from(this.topics.values()).map((topic) => topic.flush());
     await Promise.all(closingTopics);
-    await this.pubSubClient.close();
+    await this.pubsubClient.close();
   }
 
   async dispatchEvent(packet: ReadPacket<any>): Promise<any> {
@@ -61,7 +61,7 @@ export class GCPubSubClient extends ClientProxy {
     const cachedTopic = this.topics.get(topicName);
     if (cachedTopic) return cachedTopic;
 
-    const topic = this.pubSubClient.topic(topicName);
+    const topic = this.pubsubClient.topic(topicName);
     this.topics.set(topicName, topic);
     return topic;
   }

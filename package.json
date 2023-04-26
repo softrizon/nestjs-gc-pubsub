@@ -1,9 +1,9 @@
 {
-  "name": "@softrizon/gc-pubsub",
-  "version": "0.0.2",
+  "name": "@softrizon/gcp-pubsub",
+  "version": "0.0.1",
   "description": "Custom transport strategy wrapper for Google Cloud Pub/Sub within the NestJS framework",
   "author": "Softrizon LLC",
-  "repository": "softrizon/nestjs-gc-pubsub",
+  "repository": "softrizon/nestjs-gcp-pubsub",
   "license": "MIT",
   "private": false,
   "main": "./dist/src/index.js",
@@ -14,11 +14,12 @@
   "keywords": [
     "pubsub",
     "pub/sub",
-    "publish/subscribe",
+    "gcp pubsub",
+    "nestjs pubsub",
     "google pubsub",
     "pubsub wrapper",
-    "message queue",
-    "nestjs pubsub"
+    "publish/subscribe",
+    "message queue"
   ],
   "publishConfig": {
     "access": "public"

@@ -1,16 +1,16 @@
 import { INestMicroservice } from '@nestjs/common';
 import { MicroserviceOptions } from '@nestjs/microservices';
 import { Test, TestingModule } from '@nestjs/testing';
-import { GCPubSubServer } from '../src';
+import { PubSubServer } from '../src';
 import { TestSubscriber, removeSubscription, removeTopic } from './utils';
 import { PubSub } from '@google-cloud/pubsub';
 
 const waitFor = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
-describe('GC PubSub Server', () => {
+describe('PubSub Server', () => {
   let app: INestMicroservice;
   let client: PubSub;
-  let server: GCPubSubServer;
+  let server: PubSubServer;
 
   beforeAll(async () => {
     const config = { projectId: 'test', apiEndpoint: 'http://127.0.0.1:8085', port: '8085' };
@@ -20,7 +20,7 @@ describe('GC PubSub Server', () => {
     }).compile();
 
     client = new PubSub(config);
-    server = new GCPubSubServer({ config });
+    server = new PubSubServer({ config });
 
     app = moduleFixture.createNestMicroservice<MicroserviceOptions>({ strategy: server });
 

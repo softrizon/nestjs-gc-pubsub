@@ -1,11 +1,11 @@
 import { Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 
-import { EmitOptions, GCPubSubClient } from './gc-pubsub.client';
+import { EmitOptions, PubSubClient } from './pubsub.client';
 import { Observable } from 'rxjs';
 
 @Injectable()
-export class GCPubSubService implements OnModuleInit, OnModuleDestroy {
-  constructor(protected readonly client: GCPubSubClient) {}
+export class PubSubService implements OnModuleInit, OnModuleDestroy {
+  constructor(protected readonly client: PubSubClient) {}
 
   emit<T>(emitOptions: EmitOptions): Observable<T> {
     const { data, ...pattern } = emitOptions;

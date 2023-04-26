@@ -1,6 +1,6 @@
 import { PubSub, Topic } from '@google-cloud/pubsub';
-import { GCPubSubService } from '../src';
-import { GCPubSubClient } from '../src/gc-pubsub.client';
+import { PubSubService } from '../src';
+import { PubSubClient } from '../src/pubsub.client';
 
 // jest.mock('@google-cloud/pubsub');
 
@@ -10,11 +10,11 @@ const closeMock = jest.fn(() => Promise.resolve());
 const flushMock = jest.fn(() => Promise.resolve());
 const topicMock = jest.fn((name) => <Topic>(<unknown>{ name, publishMessage: publishMessageMock, flush: flushMock }));
 
-describe('GC PubSub Service', () => {
-  let service: GCPubSubService;
+describe('PubSub Service', () => {
+  let service: PubSubService;
 
   beforeAll(async () => {
-    service = new GCPubSubService(new GCPubSubClient({}));
+    service = new PubSubService(new PubSubClient({}));
     await service.onModuleInit();
   });
 
