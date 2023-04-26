@@ -2,6 +2,8 @@
 
 # Google Cloud Pub/Sub Wrapper for NestJS
 
+[![npm version][version-img]][version-url]
+[![MIT License][license-img]][license-url]
 
 ## Description
 
@@ -130,3 +132,8 @@ Developed by [Softrizon](https://github.com/softrizon).
 This project is [MIT-licensed](LICENSE).
 
 [googleapis-url]: https://github.com/googleapis/nodejs-pubsub
+
+[version-img]: https://img.shields.io/npm/v/@softrizon/gc-pubsub
+[version-url]: https://www.npmjs.com/package/@softrizon/gc-pubsub
+[license-img]: https://img.shields.io/npm/l/@softrizon/gc-pubsub
+[license-url]: https://opensource.org/licenses/MIT
